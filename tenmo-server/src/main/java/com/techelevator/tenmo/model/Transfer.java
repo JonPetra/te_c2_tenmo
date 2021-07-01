@@ -9,7 +9,8 @@ public class Transfer {
     private Integer accountTo;
     private Long amount;
 
-    public Transfer() { }
+    public Transfer() {
+    }
 
     public Transfer(Long transferId, Integer transferTypeId, Integer transferStatusId, Integer accountFrom, Integer accountTo, Long amount) {
         this.transferId = transferId;

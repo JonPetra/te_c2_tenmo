@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AccountDao {
 
-    Account getBalance(int userId);
+    Long getBalance(int userId);
 
     void updateBalance(Account user);
 }
