@@ -7,12 +7,12 @@ public class Transfer {
     private Integer transferStatusId;
     private Integer accountFrom;
     private Integer accountTo;
-    private Long amount;
+    private Double amount;
 
     public Transfer() {
     }
 
-    public Transfer(Long transferId, Integer transferTypeId, Integer transferStatusId, Integer accountFrom, Integer accountTo, Long amount) {
+    public Transfer(Long transferId, Integer transferTypeId, Integer transferStatusId, Integer accountFrom, Integer accountTo, Double amount) {
         this.transferId = transferId;
         this.transferTypeId = transferTypeId;
         this.transferStatusId = transferStatusId;
@@ -56,10 +56,10 @@ public class Transfer {
         this.accountTo = accountTo;
     }
 
-    public Long getAmount() {
+    public Double getAmount() {
         return amount;
     }
-    public void setAmount(Long amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 }

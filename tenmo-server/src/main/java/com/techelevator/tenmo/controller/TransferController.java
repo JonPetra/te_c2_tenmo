@@ -34,4 +34,16 @@ public class TransferController {
         return transferDao.getTransferById(transferId);
     }
 
+    //send
+    @RequestMapping(path = "/send/{userId}", method = RequestMethod.PUT)
+    public void send(@RequestBody Long transferId){
+        transferDao.send(transferId);
+    }
+
+    //withdraw
+    @RequestMapping(path = "/withdraw/{userId}", method = RequestMethod.PUT)
+    public void withdraw(@RequestBody Long transferId){
+        transferDao.withdraw(transferId);
+    }
+
 }
