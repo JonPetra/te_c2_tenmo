@@ -23,6 +23,8 @@ public class JdbcTransferDao implements TransferDao {
                 "VALUES (?, ?, ?, ?, ?) RETURNING transfer_id;";
         Long newId = jdbcTemplate.queryForObject(sql, Long.class, transfer.getTransferTypeId(), transfer.getTransferStatusId(),
                 transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+        send(newId);
+        withdraw(newId);
         return getTransferById(newId);
     }
 
@@ -33,7 +35,7 @@ public class JdbcTransferDao implements TransferDao {
                 "FROM transfers t " +
                 "INNER JOIN accounts a ON a.account_id = t.account_from " +
                 "INNER JOIN users u ON u.user_id = a.user_id " +
-                "WHERE user_id = ?;";
+                "WHERE u.user_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
         while (results.next()) {
             transfers.add(mapRowToTransfer(results));
@@ -56,6 +58,24 @@ public class JdbcTransferDao implements TransferDao {
         return transfer;
     }
 
+    @Override
+    public void send(Long transferId) {
+        String sql = "UPDATE accounts a " +
+                "SET balance = a.balance + f.amount " +
+                "FROM transfers f " +
+                "WHERE f.transfer_id = ? AND a.account_id = f.account_to;";
+        jdbcTemplate.update(sql, transferId);
+    }
+
+    @Override
+    public void withdraw(Long transferId) {
+        String sql = "UPDATE accounts a " +
+                "SET balance = a.balance - f.amount " +
+                "FROM transfers f " +
+                "WHERE f.transfer_id = ? AND a.account_id = f.account_from;";
+        jdbcTemplate.update(sql, transferId);
+    }
+
     private Transfer mapRowToTransfer(SqlRowSet rowSet) {
         Transfer transfer = new Transfer();
         transfer.setId(rowSet.getLong("transfer_id"));
@@ -63,7 +83,7 @@ public class JdbcTransferDao implements TransferDao {
         transfer.setTransferStatusId(rowSet.getInt("transfer_status_id"));
         transfer.setAccountFrom(rowSet.getInt("account_from"));
         transfer.setAccountTo(rowSet.getInt("account_to"));
-        transfer.setAmount(rowSet.getLong("amount"));
+        transfer.setAmount(rowSet.getDouble("amount"));
         return transfer;
     }
 }

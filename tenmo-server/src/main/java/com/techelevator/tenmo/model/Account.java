@@ -4,11 +4,11 @@ public class Account {
 
     private Long accountId;
     private Integer userId;
-    private Long balance;
+    private Double balance;
 
     public Account() { }
 
-    public Account(Long accountId, Integer userId, Long balance) {
+    public Account(Long accountId, Integer userId, Double balance) {
         this.accountId = accountId;
         this.userId = userId;
         this.balance = balance;
@@ -28,10 +28,10 @@ public class Account {
         this.userId = userId;
     }
 
-    public Long getBalance() {
+    public Double getBalance() {
         return balance;
     }
-    public void setBalance(Long balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 }

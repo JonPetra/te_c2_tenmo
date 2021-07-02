@@ -15,12 +15,12 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public Long getBalance(int userId) {
+    public Double getBalance(int userId) {
         String sql = "SELECT a.balance " +
                 "FROM accounts a " +
                 "INNER JOIN users u ON u.user_id = a.user_id " +
                 "WHERE u.user_id = ?;";
-        Long balance = jdbcTemplate.queryForObject(sql, Long.class, userId);
+        Double balance = jdbcTemplate.queryForObject(sql, Double.class, userId);
         if (balance != null) {
             return balance;
         } else {
@@ -28,20 +28,11 @@ public class JdbcAccountDao implements AccountDao {
         }
     }
 
-    // Might need to change depending on transfer logic
-    @Override
-    public void updateBalance(Account user) {
-        String sql = "UPDATE accounts " +
-                "SET balance = ? " +
-                "WHERE user_id = ?;";
-        jdbcTemplate.update(sql, user.getBalance(), user.getUserId());
-    }
-
     private Account mapRowToAccount(SqlRowSet rowSet) {
         Account account = new Account();
         account.setAccountId(rowSet.getLong("account_id"));
         account.setUserId(rowSet.getInt("user_id"));
-        account.setBalance(rowSet.getLong("balance"));
+        account.setBalance(rowSet.getDouble("balance"));
         return account;
     }
 }
