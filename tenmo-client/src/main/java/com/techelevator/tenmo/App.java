@@ -1,10 +1,14 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
-import com.techelevator.tenmo.services.AuthenticationService;
-import com.techelevator.tenmo.services.AuthenticationServiceException;
+import com.techelevator.tenmo.services.*;
 import com.techelevator.view.ConsoleService;
+import org.apiguardian.api.API;
+
+import java.sql.SQLOutput;
 
 public class App {
 
@@ -25,16 +29,22 @@ private static final String API_BASE_URL = "http://localhost:8080/";
     private AuthenticatedUser currentUser;
     private ConsoleService console;
     private AuthenticationService authenticationService;
+	private AccountService accountService;
+	private TransferService transferService;
+	private UserService userService;
 
     public static void main(String[] args) {
-    	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL));
+    	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL), new AccountService(API_BASE_URL), new TransferService(API_BASE_URL), new UserService(API_BASE_URL));
     	app.run();
     }
 
-    public App(ConsoleService console, AuthenticationService authenticationService) {
+    public App(ConsoleService console, AuthenticationService authenticationService, AccountService accountService, TransferService transferService, UserService userService) {
 		this.console = console;
 		this.authenticationService = authenticationService;
-	}
+		this.accountService = accountService;
+		this.transferService = transferService;
+		this.userService = userService;
+    }
 
 	public void run() {
 		System.out.println("*********************");
@@ -68,13 +78,22 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void viewCurrentBalance() {
-		// TODO Auto-generated method stub
-		
+		Double balance = accountService.getBalance(currentUser.getUser().getId());
+		System.out.println("Your current account balance is: $" + balance);
 	}
 
 	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
-		
+		Transfer[] transfers = transferService.listTransfersByUser(currentUser.getUser().getId());
+		if (transfers != null) {
+			System.out.println("--------------------------------------------");
+			System.out.println("Transfers");
+			System.out.println("ID            From/To                 Amount");
+			System.out.println("--------------------------------------------");
+			for (Transfer transfer : transfers) {
+				System.out.println(transfer.transferToString());
+			}
+			System.out.println("Please enter transfer ID to view details (0 to cancel): ");
+		}
 	}
 
 	private void viewPendingRequests() {
@@ -83,8 +102,17 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
-		
+		User[] users = userService.findAll();
+		if (users != null) {
+			System.out.println("--------------------------------------------");
+			System.out.println("Users");
+			System.out.println("ID            Name");
+			System.out.println("--------------------------------------------");
+			for (User user : users) {
+				System.out.println(user.userToString());
+			}
+			System.out.println("Enter ID of user you are sending to (0 to cancel): ");
+		}
 	}
 
 	private void requestBucks() {
