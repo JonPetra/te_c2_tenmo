@@ -84,21 +84,31 @@ public class App {
             System.out.println("ID			From/To			Amount");
             System.out.println("--------------------------------------------");
             for (Transfer transfer : transfers) {
-                System.out.println(transfer.getTransferId() + "		To: " + accountService.getUsername(transfer.getAccountTo()) + "		$" + transfer.getAmount());
+                System.out.print(transfer.getTransferId());
+                if (transfer.getAccountTo().equals(accountService.getAccountId(currentUser.getUser().getId()))) {
+                    System.out.print("		From: " + accountService.getUsername(transfer.getAccountFrom()));
+                } else if (transfer.getAccountFrom().equals(accountService.getAccountId(currentUser.getUser().getId()))) {
+                    System.out.print("		To: " + accountService.getUsername(transfer.getAccountTo()));
+                }
+                System.out.println("		$" + transfer.getAmount());
+
             }
             System.out.println("---------");
-            String transferId = console.getUserInput("Please enter transfer ID to view details (0 to cancel): ");
-            System.out.println();
-            Transfer transfer = transferService.getTransferById(Integer.parseInt(transferId));
-            System.out.println("--------------------------------------------");
-            System.out.println("Transfer Details");
-            System.out.println("--------------------------------------------");
-            System.out.println(" Id: " + transfer.getTransferId());
-            System.out.println(" From: " + accountService.getUsername(transfer.getAccountFrom()));
-            System.out.println(" To: " + accountService.getUsername(transfer.getAccountTo()));
-            System.out.println(" Type: " + transfer.getTransferType());
-            System.out.println(" Status: " + transfer.getTransferStatus());
-            System.out.println(" Amount: " + transfer.getAmount());
+            String transferId = console.getUserInput("Please enter transfer ID to view details (0 to cancel)");
+            if (transferId.equals("0")) {
+            } else {
+                Transfer transfer = transferService.getTransferById(Integer.parseInt(transferId));
+                System.out.println("--------------------------------------------");
+                System.out.println("Transfer Details");
+                System.out.println("--------------------------------------------");
+                System.out.println(" Id: " + transfer.getTransferId());
+                System.out.println(" From: " + accountService.getUsername(transfer.getAccountFrom()));
+                System.out.println(" To: " + accountService.getUsername(transfer.getAccountTo()));
+                System.out.println(" Type: " + transfer.getTransferType());
+                System.out.println(" Status: " + transfer.getTransferStatus());
+                System.out.println(" Amount: " + transfer.getAmount());
+                System.out.println();
+            }
         }
     }
 
@@ -118,13 +128,16 @@ public class App {
                 System.out.println(user.userToString());
             }
             System.out.println("---------");
-            String destinationAccount = console.getUserInput("Enter ID of user you are sending to (0 to cancel): ");
-            String amount = console.getUserInput("Enter amount: ");
-            if (Double.parseDouble(amount) > accountService.getBalance(currentUser.getUser().getId())) {
-                System.out.println();
-                System.out.println("Insufficient funds. Returning to main menu.");
+            String destinationAccount = console.getUserInput("Enter ID of user you are sending to (0 to cancel)");
+            if (destinationAccount.equals("0")) {
             } else {
-                transferService.createTransfer(accountService.getAccountId(currentUser.getUser().getId()), accountService.getAccountId(Integer.parseInt(destinationAccount)), amount);
+                String amount = console.getUserInput("Enter amount");
+                if (Double.parseDouble(amount) > accountService.getBalance(currentUser.getUser().getId())) {
+                    System.out.println();
+                    System.out.println("Insufficient funds. Returning to main menu.");
+                } else {
+                    transferService.createTransfer(accountService.getAccountId(currentUser.getUser().getId()), accountService.getAccountId(Integer.parseInt(destinationAccount)), amount);
+                }
             }
         }
     }
