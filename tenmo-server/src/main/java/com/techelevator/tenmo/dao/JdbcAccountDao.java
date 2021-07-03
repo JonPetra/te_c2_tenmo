@@ -15,22 +15,35 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public Double getBalance(int userId) {
+    public Double getBalance(Integer userId) {
         String sql = "SELECT a.balance " +
                 "FROM accounts a " +
                 "INNER JOIN users u ON u.user_id = a.user_id " +
                 "WHERE u.user_id = ?;";
-        Double balance = jdbcTemplate.queryForObject(sql, Double.class, userId);
-        if (balance != null) {
-            return balance;
-        } else {
-            return null;
-        }
+        return jdbcTemplate.queryForObject(sql, Double.class, userId);
+    }
+
+    @Override
+    public String getUsernameFromAccountId(Integer accountId) {
+        String sql = "SELECT u.username " +
+                "FROM users u " +
+                "INNER JOIN accounts a ON a.user_id = u.user_id " +
+                "WHERE a.account_id = ?;";
+        return jdbcTemplate.queryForObject(sql, String.class, accountId);
+    }
+
+    @Override
+    public Integer getAccountIdFromUserId(Integer userId) {
+        String sql = "SELECT a.account_id " +
+                "FROM accounts a " +
+                "INNER JOIN users u ON u.user_id = a.user_id " +
+                "WHERE u.user_id = ?;";
+        return jdbcTemplate.queryForObject(sql, Integer.class, userId);
     }
 
     private Account mapRowToAccount(SqlRowSet rowSet) {
         Account account = new Account();
-        account.setAccountId(rowSet.getLong("account_id"));
+        account.setAccountId(rowSet.getInt("account_id"));
         account.setUserId(rowSet.getInt("user_id"));
         account.setBalance(rowSet.getDouble("balance"));
         return account;
