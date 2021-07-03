@@ -2,12 +2,15 @@ package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.model.Transfer;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("transfers")
+@PreAuthorize("isAuthenticated()")
 public class TransferController {
 
     private TransferDao transferDao;
@@ -18,7 +21,7 @@ public class TransferController {
 
     //create transfer
     @RequestMapping(method = RequestMethod.POST)
-    public Transfer createTransfer(@RequestBody Transfer transfer) {
+    public Transfer createTransfer(@Valid @RequestBody Transfer transfer) {
         return transferDao.createTransfer(transfer);
     }
 
@@ -35,14 +38,16 @@ public class TransferController {
     }
 
     //send
+    @PreAuthorize("denyAll")
     @RequestMapping(path = "/send/{userId}", method = RequestMethod.PUT)
-    public void send(@RequestBody Integer transferId){
+    public void send(@Valid @RequestBody Integer transferId){
         transferDao.send(transferId);
     }
 
     //withdraw
+    @PreAuthorize("denyAll")
     @RequestMapping(path = "/withdraw/{userId}", method = RequestMethod.PUT)
-    public void withdraw(@RequestBody Integer transferId){
+    public void withdraw(@Valid @RequestBody Integer transferId){
         transferDao.withdraw(transferId);
     }
 

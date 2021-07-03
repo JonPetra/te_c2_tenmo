@@ -1,9 +1,15 @@
 package com.techelevator.tenmo.model;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class Account {
 
+    @NotNull
     private Integer accountId;
+    @NotNull
     private Integer userId;
+    @NotNull
     private Double balance;
 
     public Account() { }
@@ -17,6 +23,7 @@ public class Account {
     public Integer getAccountId() {
         return accountId;
     }
+
     public void setAccountId(Integer accountId) {
         this.accountId = accountId;
     }
@@ -24,6 +31,7 @@ public class Account {
     public Integer getUserId() {
         return userId;
     }
+
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
@@ -31,6 +39,7 @@ public class Account {
     public Double getBalance() {
         return balance;
     }
+
     public void setBalance(Double balance) {
         this.balance = balance;
     }

@@ -3,6 +3,7 @@ package com.techelevator.tenmo;
 import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.*;
 import com.techelevator.view.ConsoleService;
+import org.springframework.http.ResponseEntity;
 
 public class App {
 
@@ -10,14 +11,14 @@ public class App {
 
     private static final String MENU_OPTION_EXIT = "Exit";
     private static final String LOGIN_MENU_OPTION_REGISTER = "Register";
-    private static final String LOGIN_MENU_OPTION_LOGIN = "Login";
+    private static final String LOGIN_MENU_OPTION_LOGIN = "Log in";
     private static final String[] LOGIN_MENU_OPTIONS = {LOGIN_MENU_OPTION_REGISTER, LOGIN_MENU_OPTION_LOGIN, MENU_OPTION_EXIT};
     private static final String MAIN_MENU_OPTION_VIEW_BALANCE = "View your current balance";
     private static final String MAIN_MENU_OPTION_SEND_BUCKS = "Send TE bucks";
     private static final String MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS = "View your past transfers";
     private static final String MAIN_MENU_OPTION_REQUEST_BUCKS = "Request TE bucks";
     private static final String MAIN_MENU_OPTION_VIEW_PENDING_REQUESTS = "View your pending requests";
-    private static final String MAIN_MENU_OPTION_LOGIN = "Login as different user";
+    private static final String MAIN_MENU_OPTION_LOGIN = "Log in as different user";
     private static final String[] MAIN_MENU_OPTIONS = {MAIN_MENU_OPTION_VIEW_BALANCE, MAIN_MENU_OPTION_SEND_BUCKS, MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS, MAIN_MENU_OPTION_REQUEST_BUCKS, MAIN_MENU_OPTION_VIEW_PENDING_REQUESTS, MAIN_MENU_OPTION_LOGIN, MENU_OPTION_EXIT};
 
     private AuthenticatedUser currentUser;
@@ -41,9 +42,12 @@ public class App {
     }
 
     public void run() {
-        System.out.println("*********************");
-        System.out.println("* Welcome to TEnmo! *");
-        System.out.println("*********************");
+        System.out.println(" _________                                     ");
+        System.out.println("|  _   _  |                                    ");
+        System.out.println("|_/ | | \\_|.---.  _ .--.   _ .--..--.   .--.   ");
+        System.out.println("    | |   / /__\\\\[ `.-. | [ `.-. .-. |/ .'`\\ \\ ");
+        System.out.println("   _| |_  | \\__., | | | |  | | | | | || \\__. | ");
+        System.out.println("  |_____|  '.__.'[___||__][___||__||__]'.__.'  ");
 
         registerAndLogin();
         mainMenu();
@@ -72,42 +76,47 @@ public class App {
     }
 
     private void viewCurrentBalance() {
-        Double balance = accountService.getBalance(currentUser.getUser().getId());
+        Double balance = accountService.getBalance(currentUser.getToken(), currentUser.getUser().getId());
         System.out.println("Your current account balance is: $" + balance);
     }
 
     private void viewTransferHistory() {
-        Transfer[] transfers = transferService.listTransfersByUser(currentUser.getUser().getId());
+        Transfer[] transfers = transferService.listTransfersByUser(currentUser.getToken(), currentUser.getUser().getId());
         if (transfers != null) {
             System.out.println("--------------------------------------------");
             System.out.println("Transfers");
-            System.out.println("ID			From/To			Amount");
+            System.out.println("ID    From/To                         Amount");
             System.out.println("--------------------------------------------");
             for (Transfer transfer : transfers) {
-                System.out.print(transfer.getTransferId());
-                if (transfer.getAccountTo().equals(accountService.getAccountId(currentUser.getUser().getId()))) {
-                    System.out.print("		From: " + accountService.getUsername(transfer.getAccountFrom()));
-                } else if (transfer.getAccountFrom().equals(accountService.getAccountId(currentUser.getUser().getId()))) {
-                    System.out.print("		To: " + accountService.getUsername(transfer.getAccountTo()));
+                System.out.printf("%-6d", transfer.getTransferId());
+                if (transfer.getAccountTo().equals(accountService.getAccountId(currentUser.getToken(), currentUser.getUser().getId()))) {
+                    System.out.printf("%-26s", "From:   " + accountService.getUsername(currentUser.getToken(), transfer.getAccountFrom()));
+                } else if (transfer.getAccountFrom().equals(accountService.getAccountId(currentUser.getToken(), currentUser.getUser().getId()))) {
+                    System.out.printf("%-26s", "To:     " + accountService.getUsername(currentUser.getToken(), transfer.getAccountTo()));
                 }
-                System.out.println("		$" + transfer.getAmount());
+                System.out.printf("%12s", "$" + transfer.getAmount());
+                System.out.println();
 
             }
-            System.out.println("---------");
+            System.out.println("--------------------------------------------");
             String transferId = console.getUserInput("Please enter transfer ID to view details (0 to cancel)");
             if (transferId.equals("0")) {
             } else {
-                Transfer transfer = transferService.getTransferById(Integer.parseInt(transferId));
-                System.out.println("--------------------------------------------");
-                System.out.println("Transfer Details");
-                System.out.println("--------------------------------------------");
-                System.out.println(" Id: " + transfer.getTransferId());
-                System.out.println(" From: " + accountService.getUsername(transfer.getAccountFrom()));
-                System.out.println(" To: " + accountService.getUsername(transfer.getAccountTo()));
-                System.out.println(" Type: " + transfer.getTransferType());
-                System.out.println(" Status: " + transfer.getTransferStatus());
-                System.out.println(" Amount: " + transfer.getAmount());
-                System.out.println();
+                Transfer transfer = transferService.getTransferById(currentUser.getToken(), Integer.parseInt(transferId));
+                if (transfer.getTransferId() == null) {
+                    System.out.println("Invalid transfer ID. Returning to main menu.");
+                } else {
+                    System.out.println("--------------------------------------------");
+                    System.out.println("Transfer Details");
+                    System.out.println("--------------------------------------------");
+                    System.out.println(" Id: " + transfer.getTransferId());
+                    System.out.println(" From: " + accountService.getUsername(currentUser.getToken(), transfer.getAccountFrom()));
+                    System.out.println(" To: " + accountService.getUsername(currentUser.getToken(), transfer.getAccountTo()));
+                    System.out.println(" Type: " + transfer.getTransferType());
+                    System.out.println(" Status: " + transfer.getTransferStatus());
+                    System.out.println(" Amount: " + transfer.getAmount());
+                    System.out.println();
+                }
             }
         }
     }
@@ -118,25 +127,29 @@ public class App {
     }
 
     private void sendBucks() {
-        User[] users = userService.findAll();
+        User[] users = userService.findAll(currentUser.getToken());
         if (users != null) {
             System.out.println("--------------------------------------------");
             System.out.println("Users");
-            System.out.println("ID			Name");
+            System.out.println("ID		    Name");
             System.out.println("--------------------------------------------");
             for (User user : users) {
                 System.out.println(user.userToString());
             }
-            System.out.println("---------");
+            System.out.println("--------------------------------------------");
             String destinationAccount = console.getUserInput("Enter ID of user you are sending to (0 to cancel)");
             if (destinationAccount.equals("0")) {
             } else {
                 String amount = console.getUserInput("Enter amount");
-                if (Double.parseDouble(amount) > accountService.getBalance(currentUser.getUser().getId())) {
+                if (Double.parseDouble(amount) <= 0 || amount == "") {
+                    System.out.println();
+                    System.out.println("Invalid amount. Returning to main menu.");
+                } else if (Double.parseDouble(amount) > accountService.getBalance(currentUser.getToken(), currentUser.getUser().getId())) {
                     System.out.println();
                     System.out.println("Insufficient funds. Returning to main menu.");
                 } else {
-                    transferService.createTransfer(accountService.getAccountId(currentUser.getUser().getId()), accountService.getAccountId(Integer.parseInt(destinationAccount)), amount);
+                    transferService.createTransfer(currentUser.getToken(), accountService.getAccountId(currentUser.getToken(), currentUser.getUser().getId()), accountService.getAccountId(currentUser.getToken(), Integer.parseInt(destinationAccount)), amount);
+                    System.out.println("Transfer successful.");
                 }
             }
         }
