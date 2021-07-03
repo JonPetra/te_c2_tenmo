@@ -22,6 +22,6 @@ public class User {
 	}
 
 	public String userToString() {
-		return id + "          " + username;
+		return id + "		" + username;
 	}
 }

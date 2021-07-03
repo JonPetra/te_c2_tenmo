@@ -2,22 +2,22 @@ package com.techelevator.tenmo.model;
 
 public class Account {
 
-    private Long accountId;
+    private Integer accountId;
     private Integer userId;
     private Double balance;
 
     public Account() { }
 
-    public Account(Long accountId, Integer userId, Double balance) {
+    public Account(Integer accountId, Integer userId, Double balance) {
         this.accountId = accountId;
         this.userId = userId;
         this.balance = balance;
     }
 
-    public Long getAccountId() {
+    public Integer getAccountId() {
         return accountId;
     }
-    public void setAccountId(Long accountId) {
+    public void setAccountId(Integer accountId) {
         this.accountId = accountId;
     }
 

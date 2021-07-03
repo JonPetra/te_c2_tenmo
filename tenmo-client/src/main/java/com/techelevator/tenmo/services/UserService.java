@@ -5,6 +5,8 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.Principal;
+
 public class UserService {
 
     private String baseUrl;
@@ -20,7 +22,7 @@ public class UserService {
         try {
             foundId = restTemplate.getForObject(baseUrl + "users/id/" + username, Integer.class);
         } catch (RestClientResponseException ex) {
-            System.err.println("Could not retrieve the auctions. Is the server running?");
+            System.err.println("Could not retrieve the id. Is the server running?");
         } catch (ResourceAccessException ex) {
             System.err.println("A network error occurred.");
         }
@@ -33,7 +35,7 @@ public class UserService {
         try {
             users = restTemplate.getForObject(baseUrl + "users", User[].class);
         } catch (RestClientResponseException ex) {
-            System.err.println("Could not retrieve the auctions. Is the server running?");
+            System.err.println("Could not retrieve users. Is the server running?");
         } catch (ResourceAccessException ex) {
             System.err.println("A network error occurred.");
         }
@@ -46,7 +48,7 @@ public class UserService {
         try {
             user = restTemplate.getForObject(baseUrl + "users/" + username, User.class);
         } catch (RestClientResponseException ex) {
-            System.err.println("Could not retrieve the auctions. Is the server running?");
+            System.err.println("Could not retrieve the user. Is the server running?");
         } catch (ResourceAccessException ex) {
             System.err.println("A network error occurred.");
         }

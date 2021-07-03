@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.AccessibleObject;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -36,6 +37,5 @@ public class UserController {
     public User findByUsername(@PathVariable String username) {
         return userDao.findByUsername(username);
     }
-
 
 }

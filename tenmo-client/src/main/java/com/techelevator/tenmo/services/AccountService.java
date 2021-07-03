@@ -21,12 +21,37 @@ public class AccountService {
         try {
             balance = restTemplate.getForObject(baseUrl + "accounts/" + userId, Double.class);
         } catch (RestClientResponseException ex) {
-            System.err.println("Could not retrieve the auctions. Is the server running?");
+            System.err.println("Could not retrieve the balance. Is the server running?");
         } catch (ResourceAccessException ex) {
             System.err.println("A network error occurred.");
         }
         return balance;
     }
 
+    //get username
+    public String getUsername(Integer accountId) {
+        String username = null;
+        try {
+            username = restTemplate.getForObject(baseUrl + "accounts/retrieve_username/" + accountId, String.class);
+        } catch (RestClientResponseException ex) {
+            System.err.println("Could not retrieve the username. Is the server running?");
+        } catch (ResourceAccessException ex) {
+            System.err.println("A network error occurred.");
+        }
+        return username;
+    }
+
+    //get account id
+    public Integer getAccountId(Integer userId) {
+        Integer accountId = null;
+        try {
+            accountId = restTemplate.getForObject(baseUrl + "accounts/retrieve_account_id/" + userId, Integer.class);
+        } catch (RestClientResponseException ex) {
+            System.err.println("Could not retrieve the ID. Is the server running?");
+        } catch (ResourceAccessException ex) {
+            System.err.println("A network error occurred.");
+        }
+        return accountId;
+    }
 
 }

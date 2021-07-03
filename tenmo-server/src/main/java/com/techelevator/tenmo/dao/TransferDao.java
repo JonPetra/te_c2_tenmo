@@ -8,11 +8,11 @@ public interface TransferDao {
 
     Transfer createTransfer(Transfer transfer);
 
-    List<Transfer> listTransfersByUser(Long userId);
+    List<Transfer> listTransfersByUser(Integer userId);
 
-    Transfer getTransferById(Long transferId);
+    Transfer getTransferById(Integer transferId);
 
-    void send(Long transferId);
+    void send(Integer transferId);
 
-    void withdraw(Long transferId);
+    void withdraw(Integer transferId);
 }

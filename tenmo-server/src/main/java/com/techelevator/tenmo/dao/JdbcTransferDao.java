@@ -21,7 +21,7 @@ public class JdbcTransferDao implements TransferDao {
     public Transfer createTransfer(Transfer transfer) {
         String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
                 "VALUES (?, ?, ?, ?, ?) RETURNING transfer_id;";
-        Long newId = jdbcTemplate.queryForObject(sql, Long.class, transfer.getTransferTypeId(), transfer.getTransferStatusId(),
+        Integer newId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferTypeId(), transfer.getTransferStatusId(),
                 transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
         send(newId);
         withdraw(newId);
@@ -29,7 +29,7 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     @Override
-    public List<Transfer> listTransfersByUser(Long userId) {
+    public List<Transfer> listTransfersByUser(Integer userId) {
         List<Transfer> transfers = new ArrayList<>();
         String sql = "SELECT t.transfer_id, t.transfer_type_id, t.transfer_status_id, t.account_from, t.account_to, t.amount " +
                 "FROM transfers t " +
@@ -46,7 +46,7 @@ public class JdbcTransferDao implements TransferDao {
     //do we need to add the person's name here?
 
     @Override
-    public Transfer getTransferById(Long transferId) {
+    public Transfer getTransferById(Integer transferId) {
         Transfer transfer = new Transfer();
         String sql = "SELECT t.transfer_id, t.transfer_type_id, t.transfer_status_id, t.account_from, t.account_to, t.amount " +
                 "FROM transfers t " +
@@ -59,7 +59,7 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     @Override
-    public void send(Long transferId) {
+    public void send(Integer transferId) {
         String sql = "UPDATE accounts a " +
                 "SET balance = a.balance + f.amount " +
                 "FROM transfers f " +
@@ -68,7 +68,7 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     @Override
-    public void withdraw(Long transferId) {
+    public void withdraw(Integer transferId) {
         String sql = "UPDATE accounts a " +
                 "SET balance = a.balance - f.amount " +
                 "FROM transfers f " +
@@ -78,7 +78,7 @@ public class JdbcTransferDao implements TransferDao {
 
     private Transfer mapRowToTransfer(SqlRowSet rowSet) {
         Transfer transfer = new Transfer();
-        transfer.setId(rowSet.getLong("transfer_id"));
+        transfer.setTransferId(rowSet.getInt("transfer_id"));
         transfer.setTransferTypeId(rowSet.getInt("transfer_type_id"));
         transfer.setTransferStatusId(rowSet.getInt("transfer_status_id"));
         transfer.setAccountFrom(rowSet.getInt("account_from"));

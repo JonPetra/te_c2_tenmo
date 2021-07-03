@@ -2,7 +2,7 @@ package com.techelevator.tenmo.model;
 
 public class Transfer {
 
-    private Long transferId;
+    private Integer transferId;
     private Integer transferTypeId;
     private Integer transferStatusId;
     private Integer accountFrom;
@@ -12,7 +12,7 @@ public class Transfer {
     public Transfer() {
     }
 
-    public Transfer(Long transferId, Integer transferTypeId, Integer transferStatusId, Integer accountFrom, Integer accountTo, Double amount) {
+    public Transfer(Integer transferId, Integer transferTypeId, Integer transferStatusId, Integer accountFrom, Integer accountTo, Double amount) {
         this.transferId = transferId;
         this.transferTypeId = transferTypeId;
         this.transferStatusId = transferStatusId;
@@ -21,10 +21,10 @@ public class Transfer {
         this.amount = amount;
     }
 
-    public Long getId() {
+    public Integer getTransferId() {
         return transferId;
     }
-    public void setId(Long transferId) {
+    public void setTransferId(Integer transferId) {
         this.transferId = transferId;
     }
 

@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.services;
 
+import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,25 +12,26 @@ import org.springframework.web.client.RestTemplate;
 public class TransferService {
 
     private String baseUrl;
+    private AuthenticatedUser currentUser;
     private RestTemplate restTemplate = new RestTemplate();
 
     public TransferService(String url) {
         this.baseUrl = url;
     }
 
-//    //create transfer
-//    public Transfer createTransfer(String destinationAccount, String amount) {
-//        Transfer transfer = makeTransfer(destinationAccount, amount);
-//        HttpEntity<Transfer> entity = makeEntity(transfer);
-//        try {
-//            return restTemplate.postForObject(baseUrl + "transfers", entity, Transfer.class);
-//        } catch (RestClientResponseException ex) {
-//            System.err.println(ex.getRawStatusCode() + " " + ex.getStatusText());
-//        } catch (ResourceAccessException ex) {
-//            System.err.println(ex.getMessage());
-//        }
-//        return null;
-//    }
+    //create transfer
+    public Transfer createTransfer(Integer accountId, Integer destinationAccount, String amount) {
+        Transfer transfer = new Transfer(null, 2, 2, accountId, destinationAccount, Double.parseDouble(amount));
+        HttpEntity<Transfer> entity = makeEntity(transfer);
+        try {
+            return restTemplate.postForObject(baseUrl + "transfers", entity, Transfer.class);
+        } catch (RestClientResponseException ex) {
+            System.err.println(ex.getRawStatusCode() + " " + ex.getStatusText());
+        } catch (ResourceAccessException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return null;
+    }
 
     //list transfers by user
     public Transfer[] listTransfersByUser(Integer userId) {
@@ -64,10 +66,5 @@ public class TransferService {
         HttpEntity<Transfer> entity = new HttpEntity<>(transfer, headers);
         return entity;
     }
-
-//    private Transfer makeTransfer(String destinationAccount, String amount) {
-//        return new Transfer(2, 2, 2002, Integer.parseInt(destinationAccount), Double.parseDouble(amount));
-//    }
-//    //still need to remove hard-coded values
 
 }
