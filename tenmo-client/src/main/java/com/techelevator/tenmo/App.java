@@ -4,6 +4,11 @@ import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.*;
 import com.techelevator.view.ConsoleService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientResponseException;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class App {
 
@@ -27,6 +32,8 @@ public class App {
     private AccountService accountService;
     private TransferService transferService;
     private UserService userService;
+
+    public DecimalFormat df = new DecimalFormat("###.00");
 
     public static void main(String[] args) {
         App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL), new AccountService(API_BASE_URL), new TransferService(API_BASE_URL), new UserService(API_BASE_URL));
@@ -77,7 +84,7 @@ public class App {
 
     private void viewCurrentBalance() {
         Double balance = accountService.getBalance(currentUser.getToken(), currentUser.getUser().getId());
-        System.out.println("Your current account balance is: $" + balance);
+        System.out.println("Your current account balance is: $" + df.format(balance));
     }
 
     private void viewTransferHistory() {
@@ -94,7 +101,7 @@ public class App {
                 } else if (transfer.getAccountFrom().equals(accountService.getAccountId(currentUser.getToken(), currentUser.getUser().getId()))) {
                     System.out.printf("%-26s", "To:     " + accountService.getUsername(currentUser.getToken(), transfer.getAccountTo()));
                 }
-                System.out.printf("%12s", "$" + transfer.getAmount());
+                System.out.printf("%12s", "$" + df.format(transfer.getAmount()));
                 System.out.println();
 
             }
@@ -102,6 +109,12 @@ public class App {
             String transferId = console.getUserInput("Please enter transfer ID to view details (0 to cancel)");
             if (transferId.equals("0")) {
             } else {
+                try {
+                    Integer.parseInt(transferId);
+                } catch (NumberFormatException e) {
+                    System.out.println("Non-numeric ID. Please enter the Transfer ID from the ID column. Returning to main menu");
+                    mainMenu();
+                }
                 Transfer transfer = transferService.getTransferById(currentUser.getToken(), Integer.parseInt(transferId));
                 if (transfer.getTransferId() == null) {
                     System.out.println("Invalid transfer ID. Returning to main menu.");
@@ -114,8 +127,8 @@ public class App {
                     System.out.println(" To: " + accountService.getUsername(currentUser.getToken(), transfer.getAccountTo()));
                     System.out.println(" Type: " + transfer.getTransferType());
                     System.out.println(" Status: " + transfer.getTransferStatus());
-                    System.out.println(" Amount: " + transfer.getAmount());
-                    System.out.println();
+                    System.out.println(" Amount: $" + df.format(transfer.getAmount()));
+                    System.out.println("--------------------------------------------");
                 }
             }
         }
@@ -128,6 +141,7 @@ public class App {
 
     private void sendBucks() {
         User[] users = userService.findAll(currentUser.getToken());
+        List<Integer> userIds = new ArrayList<>();
         if (users != null) {
             System.out.println("--------------------------------------------");
             System.out.println("Users");
@@ -135,13 +149,24 @@ public class App {
             System.out.println("--------------------------------------------");
             for (User user : users) {
                 System.out.println(user.userToString());
+                userIds.add(user.getId());
             }
             System.out.println("--------------------------------------------");
             String destinationAccount = console.getUserInput("Enter ID of user you are sending to (0 to cancel)");
             if (destinationAccount.equals("0")) {
+            } else if (destinationAccount.equals("") || !userIds.contains(Integer.parseInt(destinationAccount))) {
+                System.out.println("Invalid ID. Returning to main menu.");
+            } else if (Integer.parseInt(destinationAccount) == (currentUser.getUser().getId())) {
+                System.out.println("Cannot transfer to yourself. Returning to main menu.");
             } else {
                 String amount = console.getUserInput("Enter amount");
-                if (Double.parseDouble(amount) <= 0 || amount == "") {
+                try {
+                    Double.parseDouble(amount);
+                } catch (NumberFormatException e) {
+                    System.out.println("Not a number. Returning to main menu.");
+                    mainMenu();
+                }
+                if (amount.equals("") || Double.parseDouble(amount) <= 0) {
                     System.out.println();
                     System.out.println("Invalid amount. Returning to main menu.");
                 } else if (Double.parseDouble(amount) > accountService.getBalance(currentUser.getToken(), currentUser.getUser().getId())) {
