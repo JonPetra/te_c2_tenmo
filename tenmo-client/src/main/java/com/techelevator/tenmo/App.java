@@ -3,8 +3,6 @@ package com.techelevator.tenmo;
 import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.*;
 import com.techelevator.view.ConsoleService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClientResponseException;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -113,7 +111,7 @@ public class App {
                     Integer.parseInt(transferId);
                 } catch (NumberFormatException e) {
                     System.out.println("Non-numeric ID. Please enter the Transfer ID from the ID column. Returning to main menu");
-                    mainMenu();
+                    return;
                 }
                 Transfer transfer = transferService.getTransferById(currentUser.getToken(), Integer.parseInt(transferId));
                 if (transfer.getTransferId() == null) {
