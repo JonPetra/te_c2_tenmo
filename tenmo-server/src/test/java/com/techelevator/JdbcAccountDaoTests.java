@@ -9,17 +9,17 @@ import org.junit.Test;
 public class JdbcAccountDaoTests extends TenmoDaoTests {
 
     private static final Account ACCOUNT_1 =
-            new Account(2001, 1001, 1000.00);
+            new Account(2091, 1091, 1000.00);
     private static final Account ACCOUNT_2 =
-            new Account(2002, 1002, 1000.00);
+            new Account(2092, 1092, 1000.00);
     private static final Account ACCOUNT_3 =
-            new Account(2003, 1003, 1000.00);
+            new Account(2093, 1093, 1000.00);
     private static final Account ACCOUNT_4 =
-            new Account(2004, 1004, 1000.00);
+            new Account(2094, 1094, 1000.00);
     private static final Account ACCOUNT_5 =
-            new Account(2005, 1005, 1000.00);
+            new Account(2095, 1095, 1000.00);
     private static final Account ACCOUNT_6 =
-            new Account(2006, 1006, 1000.00);
+            new Account(2096, 1096, 1000.00);
 
     private Account testAccount;
     private JdbcAccountDao sut;
@@ -27,17 +27,17 @@ public class JdbcAccountDaoTests extends TenmoDaoTests {
     @Before
     public void setup() {
         sut = new JdbcAccountDao(dataSource);
-        testAccount = new Account(2007, 1007, 1000.00);
+        testAccount = new Account(2097, 1097, 1000.00);
     }
 
     //Double getBalance(Integer userId);
     @Test
     public void getBalance_returns_correct_balance() {
-        Double balance = sut.getBalance(1001);
+        Double balance = sut.getBalance(1091);
         Double expected = 1000.00;
         Assert.assertEquals(expected, balance);
 
-        balance = sut.getBalance(1006);
+        balance = sut.getBalance(1096);
         expected = 1000.00;
         Assert.assertEquals(expected, balance);
     }
@@ -45,22 +45,22 @@ public class JdbcAccountDaoTests extends TenmoDaoTests {
     //String getUsernameFromAccountId(Integer accountId);
     @Test
     public void getUsernameFromAccountId_returns_correct_username() {
-        String username = sut.getUsernameFromAccountId(2001);
+        String username = sut.getUsernameFromAccountId(2091);
         Assert.assertEquals("testuser1", username);
 
-        username = sut.getUsernameFromAccountId(2006);
+        username = sut.getUsernameFromAccountId(2096);
         Assert.assertEquals("testuser6", username);
     }
 
     //Integer getAccountIdFromUserId(Integer userId);
     @Test
     public void getAccountIdFromUserId_returns_correct_id() {
-        Integer id = sut.getAccountIdFromUserId(1001);
-        Integer expected = 2001;
+        Integer id = sut.getAccountIdFromUserId(1091);
+        Integer expected = 2091;
         Assert.assertEquals(expected, id);
 
-        id = sut.getAccountIdFromUserId(1006);
-        expected = 2006;
+        id = sut.getAccountIdFromUserId(1096);
+        expected = 2096;
         Assert.assertEquals(expected, id);
     }
 

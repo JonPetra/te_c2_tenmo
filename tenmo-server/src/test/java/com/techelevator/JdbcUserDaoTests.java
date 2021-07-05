@@ -5,24 +5,25 @@ import com.techelevator.tenmo.model.User;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 
 public class JdbcUserDaoTests extends TenmoDaoTests {
 
     private static final User USER_1 =
-            new User(1001L, "testuser1", "password1", "USER");
+            new User(1091L, "testuser1", "password1", "USER");
     private static final User USER_2 =
-            new User(1002L, "testuser2", "password1", "USER");
+            new User(1092L, "testuser2", "password1", "USER");
     private static final User USER_3 =
-            new User(1003L, "testuser3", "password1", "USER");
+            new User(1093L, "testuser3", "password1", "USER");
     private static final User USER_4 =
-            new User(1004L, "testuser4", "password1", "USER");
+            new User(1094L, "testuser4", "password1", "USER");
     private static final User USER_5 =
-            new User(1005L, "testuser5", "password1", "USER");
+            new User(1095L, "testuser5", "password1", "USER");
     private static final User USER_6 =
-            new User(1006L, "testuser6", "password1", "USER");
+            new User(1096L, "testuser6", "password1", "USER");
 
     private User testUser;
     private JdbcUserDao sut;
@@ -30,7 +31,7 @@ public class JdbcUserDaoTests extends TenmoDaoTests {
     @Before
     public void setup() {
         sut = new JdbcUserDao(dataSource);
-        testUser = new User(1007L, "testuser7", "password1", "USER");
+        testUser = new User(1097L, "testuser7", "password1", "USER");
     }
 
     //List<User> findAll();
@@ -48,29 +49,34 @@ public class JdbcUserDaoTests extends TenmoDaoTests {
         User user = sut.findByUsername("testuser1");
         assertUsersMatch(USER_1, user);
 
-        user = sut.findByUsername("testuser6");
+        user = sut.findByUsername("testuser4");
         assertUsersMatch(USER_4, user);
     }
 
-    @Test
-    public void findByUsername_returns_null_when_username_not_found() {
-        User user = sut.findByUsername("George Washington");
-        Assert.assertNull(user);
+    @Test(expected = UsernameNotFoundException.class)
+    public void findByUsername_returns_exception_when_username_not_found()  {
+        sut.findByUsername("George Washington");
     }
 
     //int findIdByUsername(String username);
     @Test
     public void findIdByUsername_returns_correct_id() {
         int userId = sut.findIdByUsername("testuser1");
-        Assert.assertEquals(1001, userId);
+        Assert.assertEquals(1091, userId);
 
-        userId = sut.findIdByUsername("testuser4");
-        Assert.assertEquals(1004, userId);
+        int userId1 = sut.findIdByUsername("testuser4");
+        Assert.assertEquals(1094, userId1);
     }
 
+    @Test(expected = EmptyResultDataAccessException.class)
     public void findIdByUsername_returns_null_when_username_not_found() {
-        int userId = sut.findIdByUsername("Boots");
-        Assert.assertEquals(0, userId);
+        sut.findIdByUsername("Boots");
+    }
+
+    @Test
+    public void createUser_creates_new_user() {
+        boolean createdUser = sut.create("testuser8", "password1" );
+        Assert.assertTrue(createdUser);
     }
 
     //helper method
