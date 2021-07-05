@@ -25,13 +25,11 @@ public class JdbcTransferDaoTests extends TenmoDaoTests {
             new Transfer(3006, 2, 2, 2006, 2003, 5000.00);
 
     private Transfer testTransfer;
-    private JdbcTemplate jdbcTemplate;
     private JdbcTransferDao sut;
 
     @Before
     public void setup() {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        sut = new JdbcTransferDao(jdbcTemplate);
+        sut = new JdbcTransferDao(dataSource);
         testTransfer = new Transfer(null, 2, 2, 2004, 2001, 52.00);
     }
 
@@ -67,10 +65,10 @@ public class JdbcTransferDaoTests extends TenmoDaoTests {
     @Test
     public void getTransferById_returns_correct_transfer() {
         Transfer transfer = sut.getTransferById(3001);
-        Assert.assertEquals(TRANSFER_1, transfer);
+        assertTransfersMatch(TRANSFER_1, transfer);
 
         transfer = sut.getTransferById(1006);
-        Assert.assertEquals(TRANSFER_6, transfer);
+        assertTransfersMatch(TRANSFER_6, transfer);
     }
 
     //helper method

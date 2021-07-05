@@ -25,13 +25,11 @@ public class JdbcUserDaoTests extends TenmoDaoTests {
             new User(1006L, "testuser6", "password1", "USER");
 
     private User testUser;
-    private JdbcTemplate jdbcTemplate;
     private JdbcUserDao sut;
 
     @Before
     public void setup() {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        sut = new JdbcUserDao(jdbcTemplate);
+        sut = new JdbcUserDao(dataSource);
         testUser = new User(1007L, "testuser7", "password1", "USER");
     }
 
