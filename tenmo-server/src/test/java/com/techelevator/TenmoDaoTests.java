@@ -19,14 +19,14 @@ public class TenmoDaoTests {
     public static void setupDataSource() {
         dataSource = new SingleConnectionDataSource();
         dataSource.setUrl("jdbc:postgresql://localhost:5432/tenmo");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("postgres1");
+        dataSource.setUsername("tenmo");
+        dataSource.setPassword("tenmo_appuser");
         dataSource.setAutoCommit(false);
     }
 
     @Before
     public void loadTestData() throws IOException, SQLException {
-        ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("/Users/student/workspace/java-capstone-module-2-team-16/database/dummydata.sql"));
+        ScriptUtils.executeSqlScript(dataSource.getConnection(), new ClassPathResource("resources/dummydata.sql"));
     }
 
     @After

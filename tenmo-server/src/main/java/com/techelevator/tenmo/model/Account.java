@@ -1,6 +1,5 @@
 package com.techelevator.tenmo.model;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class Account {
@@ -12,7 +11,8 @@ public class Account {
     @NotNull
     private Double balance;
 
-    public Account() { }
+    public Account() {
+    }
 
     public Account(Integer accountId, Integer userId, Double balance) {
         this.accountId = accountId;
