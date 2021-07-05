@@ -5,7 +5,6 @@ import com.techelevator.tenmo.model.Account;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 public class JdbcAccountDaoTests extends TenmoDaoTests {
 
@@ -23,13 +22,11 @@ public class JdbcAccountDaoTests extends TenmoDaoTests {
             new Account(2006, 1006, 1000.00);
 
     private Account testAccount;
-    private JdbcTemplate jdbcTemplate;
     private JdbcAccountDao sut;
 
     @Before
     public void setup() {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        sut = new JdbcAccountDao(jdbcTemplate);
+        sut = new JdbcAccountDao(dataSource);
         testAccount = new Account(2007, 1007, 1000.00);
     }
 
