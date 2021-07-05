@@ -152,7 +152,13 @@ public class App {
             System.out.println("--------------------------------------------");
             String destinationAccount = console.getUserInput("Enter ID of user you are sending to (0 to cancel)");
             if (destinationAccount.equals("0")) {
-            } else if (destinationAccount.equals("") || !userIds.contains(Integer.parseInt(destinationAccount))) {
+                return;
+            } try {
+                Integer.parseInt(destinationAccount);
+            } catch (NumberFormatException e) {
+                System.out.println("Non-numeric ID. Please enter the Transfer ID from the ID column. Returning to main menu");
+                return;
+            } if (!userIds.contains(Integer.parseInt(destinationAccount))) {
                 System.out.println("Invalid ID. Returning to main menu.");
             } else if (Integer.parseInt(destinationAccount) == (currentUser.getUser().getId())) {
                 System.out.println("Cannot transfer to yourself. Returning to main menu.");
@@ -162,7 +168,7 @@ public class App {
                     Double.parseDouble(amount);
                 } catch (NumberFormatException e) {
                     System.out.println("Not a number. Returning to main menu.");
-                    mainMenu();
+                    return;
                 }
                 if (amount.equals("") || Double.parseDouble(amount) <= 0) {
                     System.out.println();
