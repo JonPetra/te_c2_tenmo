@@ -106,16 +106,17 @@ public class App {
             System.out.println("--------------------------------------------");
             String transferId = console.getUserInput("Please enter transfer ID to view details (0 to cancel)");
             if (transferId.equals("0")) {
+                return;
             } else {
                 try {
                     Integer.parseInt(transferId);
                 } catch (NumberFormatException e) {
-                    System.out.println("Non-numeric ID. Please enter the Transfer ID from the ID column. Returning to main menu");
+                    System.out.println("\nNon-numeric ID - Please enter a transfer ID from the ID column - Returning to main menu");
                     return;
                 }
                 Transfer transfer = transferService.getTransferById(currentUser.getToken(), Integer.parseInt(transferId));
                 if (transfer.getTransferId() == null) {
-                    System.out.println("Invalid transfer ID. Returning to main menu.");
+                    System.out.println("\nInvalid transfer ID - Returning to main menu");
                 } else {
                     System.out.println("--------------------------------------------");
                     System.out.println("Transfer Details");
@@ -156,29 +157,27 @@ public class App {
             } try {
                 Integer.parseInt(destinationAccount);
             } catch (NumberFormatException e) {
-                System.out.println("Non-numeric ID. Please enter the Transfer ID from the ID column. Returning to main menu");
+                System.out.println("\nNon-numeric ID - Please enter a user ID from the ID column - Returning to main menu");
                 return;
             } if (!userIds.contains(Integer.parseInt(destinationAccount))) {
-                System.out.println("Invalid ID. Returning to main menu.");
+                System.out.println("\nInvalid user ID - Returning to main menu");
             } else if (Integer.parseInt(destinationAccount) == (currentUser.getUser().getId())) {
-                System.out.println("Cannot transfer to yourself. Returning to main menu.");
+                System.out.println("\nCannot transfer to yourself - Returning to main menu");
             } else {
                 String amount = console.getUserInput("Enter amount");
                 try {
                     Double.parseDouble(amount);
                 } catch (NumberFormatException e) {
-                    System.out.println("Not a number. Returning to main menu.");
+                    System.out.println("\nNon-numeric input - Returning to main menu");
                     return;
                 }
                 if (amount.equals("") || Double.parseDouble(amount) <= 0) {
-                    System.out.println();
-                    System.out.println("Invalid amount. Returning to main menu.");
+                    System.out.println("\nInvalid amount - Returning to main menu");
                 } else if (Double.parseDouble(amount) > accountService.getBalance(currentUser.getToken(), currentUser.getUser().getId())) {
-                    System.out.println();
-                    System.out.println("Insufficient funds. Returning to main menu.");
+                    System.out.println("\nInsufficient funds - Returning to main menu");
                 } else {
                     transferService.createTransfer(currentUser.getToken(), accountService.getAccountId(currentUser.getToken(), currentUser.getUser().getId()), accountService.getAccountId(currentUser.getToken(), Integer.parseInt(destinationAccount)), amount);
-                    System.out.println("Transfer successful.");
+                    System.out.println("\nTransfer successful");
                 }
             }
         }
